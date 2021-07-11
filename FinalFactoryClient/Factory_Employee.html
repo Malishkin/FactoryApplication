@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees</title>
+</head>
+
+<script>
+
+    
+const urlParams = new URLSearchParams(window.location.search);
+    let userid = urlParams.get('userid');
+    
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+    
+
+    async function getNeeded(){
+        let val = document.getElementById('elastic').value.toUpperCase();
+        let resp = await fetch("https://localhost:44367/api/Employee");
+        let employees = await resp.json();
+        if(val!=''){
+            employees.forEach(emp=>{
+
+                
+               
+                if(emp.fName.toUpperCase()==val ||emp.lName.toUpperCase()==val ||emp.department_id==val){
+
+                    window.location.href = "Factory_Employee_SearchResults.html?userid=" + userid;
+
+                    sessionStorage.setItem('value', val);
+
+              
+               
+            
+              
+                          
+                }
+                else {
+                    document.getElementById('res').innerText = "No results...";
+
+                }
+            })
+        }
+
+        else {
+            document.getElementById('res').innerText = "";
+
+        }
+
+
+    }
+   
+    function logout() {
+        window.location.href = "Factory_Login.html";
+    }
+
+    async function getEmployees(){
+        let resp = await fetch("https://localhost:44367/api/Employee");
+        let employees = await resp.json();
+        console.log(employees);
+        employees.forEach(emp => {
+            let trObj = document.createElement("tr");
+
+            let tdFullName = document.createElement("td");
+            
+            let linkObj = document.createElement("a");
+            linkObj.innerText = emp.lName + ' '+ emp.fName;
+            linkObj.href = "Employee_EditEmployee.html?employeeid="+emp.ID  + "&userid="+userid;;
+            tdFullName.appendChild(linkObj);
+
+            
+
+            let tdStartYear = document.createElement("td");
+            tdStartYear.innerText = emp.startWorkYear;
+
+
+            let tdDepartment = document.createElement("td");
+            tdDepartment.innerText = emp.department_id;
+
+
+            let tdShifts = document.createElement("td");
+            let tblObj = document.createElement("table");
+            tblObj.border = 1;
+            
+            
+            let tr1Obj = document.createElement("tr")
+            
+
+            emp.shifts.forEach(sh=>{
+                let tdDate = document.createElement("td");
+                tdDate.innerText = sh.date.slice(0,10) + ', ' + sh.startTime + ' - ' + sh.endTime;
+                tr1Obj.appendChild(tdDate);
+
+              
+            })
+
+            
+            tblObj.appendChild(tr1Obj);
+
+            tdShifts.appendChild(tblObj);
+            
+
+            trObj.appendChild(tdFullName);   
+            trObj.appendChild(tdStartYear);
+            trObj.appendChild(tdDepartment);
+            trObj.appendChild(tdShifts);
+            document.getElementById("tbl").appendChild(trObj);
+        });
+
+    }
+
+    function backToHomePage() {
+            window.location.href = "Factory_Home_Page.html?userid=" + userid;
+        }
+        function redirectAddEmployee(){
+        window.location.href = "Factory_NewEmployee.html?userid="+userid;
+    }
+    function redirectAddShift(){
+    window.location.href = "Factory_NewShift.html?userid="+userid;
+}
+
+
+
+    
+
+       
+
+    
+
+
+
+
+</script>
+<body onload="welcomeName(); getEmployees()">
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+    
+        <input type="text" id="elastic"  placeholder="search employee..." onkeyup="getNeeded()" >
+       
+    <br><br>
+    <span id="res"></span><br><br>
+    
+    
+    
+    
+    
+   
+    <table border="1" id="tbl">
+        <tr><th>Worker Full Name</th><th>Works from</th><th>Dep</th><th>Shifts
+        </th></tr>
+    </table><br><br><br>
+    
+    
+    <input type="button"  value="Add Employee" onclick="redirectAddEmployee()"><br><br>
+    <input type="button" value="Add Shit" onclick="redirectAddShift()"> <br><br>
+    <input type="button" value="Back to Homepage" onclick="backToHomePage()">
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+   
+</body>
+</html>

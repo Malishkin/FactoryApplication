@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Department</title>
+</head>
+
+<script>
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    let userid = urlParams.get('userid');
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+    
+
+    
+
+    async function getDepartment(){
+        const urlParams = new URLSearchParams(window.location.search);
+        let departid = urlParams.get('departid');
+        let resp1 = await fetch("https://localhost:44367/api/Department/" + departid);
+        let data1 = await resp1.json();
+        console.log(data1);
+        document.getElementById("department_name").value = data1.department_name;
+        document.getElementById("department_manager").value = data1.department_manager;
+    }
+
+    function logout() {
+        window.location.href = "Factory_Login.html";
+    }
+
+    async function updateDepartment() {
+            let status = await addAction();
+            if (status == true)
+            {
+                const urlParams2 = new URLSearchParams(window.location.search);
+                let departid = urlParams2.get('departid');
+                let obj = {
+                    department_name: document.getElementById("department_name").value,
+                    department_manager: document.getElementById("department_manager").value
+                }
+                let fetchParams = {
+                    method: 'PUT',
+                    body: JSON.stringify(obj),
+                    headers: { "Content-Type": "application/json" }
+                }
+
+                let resp = await fetch("https://localhost:44367/api/Department/" + departid, fetchParams);
+                let status = await resp.json();
+                alert(status);
+                window.location.href = "Factory_Department.html?userid=" + userid;
+
+
+            }
+
+
+        }
+
+    async function deleteDepartment() {
+            let status = await addAction();
+            if (status == true)
+            {
+                const urlParams3 = new URLSearchParams(window.location.search);
+                let departid = urlParams3.get('departid');
+                let fetchParams = {
+                    method: 'DELETE',
+                    headers: { "Content-Type": "application/json" }
+
+                }
+
+                let resp = await fetch("https://localhost:44367/api/Department/" + departid, fetchParams);
+                let status = await resp.json();
+                alert(status);
+                window.location.href = "Factory_Department.html?userid=" + userid;
+
+            }
+
+
+
+
+        }
+
+    function backToHomePage() {
+            window.location.href = "Factory_Home_Page.html?userid=" + userid;
+        }
+
+        function backToDepartments() {
+            window.location.href = "Factory_Department.html?userid="+userid;
+        }
+
+        var outOfActions = false;
+   
+async function checkLogs(userid) 
+{
+  var resp = await fetch("https://localhost:44367/api/Login/"+userid);
+  outOfActions = await resp.json();
+  if (outOfActions == true) {
+    alert("You are out of actions. Come back tomorrow");
+    window.location.href = "Factory_Login.html";
+    return outOfActions;
+  } else {
+    return outOfActions;
+  }
+}
+async function addAction()
+{
+  let status=await checkLogs(userid);
+  if (status == false) {
+    let objToAct = { user_id: userid }
+    var addActParams = {
+      method: 'put',
+      body: JSON.stringify(objToAct),
+      headers: { "Content-type": "application/json" }
+    }
+    let addAction = await fetch("https://localhost:44367/api/Login/" + userid, addActParams);
+    
+    return true;
+    console.log(added);
+  } else {
+    return false;
+  }
+} 
+
+    
+
+
+</script>
+<body onload="getDepartment(); welcomeName()" >
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+    Department Name : <input type="text" id="department_name"><br> <br>
+    Department Manager ID : <input type="text"  id="department_manager"> <br> <br>
+    <input type="button"  value="Update Department" onclick="updateDepartment()"><br><br>
+    <input type="button"  value="Delete Department" onclick="deleteDepartment()"><br><br>
+
+    <input type="button" value="Back to departments" onclick="backToDepartments()"><br><br>
+    
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+    <input type="button" value="Back to Homepage" onclick="backToHomePage()">
+</body>
+</html>

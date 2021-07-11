@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee With Shifts</title>
+</head>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    let userid = urlParams.get('userid');
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+  
+ 
+    function logout() {
+        window.location.href = "Factory_Login.html";
+    }
+
+    async function getEmployeeWithShift(){
+        let resp = await fetch("https://localhost:44367/api/ExtendedEmpShift1");
+        let employees = await resp.json();
+        console.log(employees);
+        employees.forEach(emp => {
+            let trObj = document.createElement("tr");
+
+            let tdFullName = document.createElement("td");
+            
+            let linkObj = document.createElement("a");
+            linkObj.innerText = emp.fName + ' '+ emp.lName;
+            linkObj.href = "EmployeeShift_EditEmployeeShift.html?employeeid="+emp.ID  + "&userid="+userid;;
+            tdFullName.appendChild(linkObj);
+            let tdEmployeeId = document.createElement("td");
+            tdEmployeeId.innerText = emp.employee_id;
+
+            let tdShifteeId = document.createElement("td");
+            tdShifteeId.innerText = emp.shift1_id;
+            
+      
+            trObj.appendChild(tdFullName); 
+            trObj.appendChild(tdEmployeeId)  
+            trObj.appendChild(tdShifteeId);
+            
+            document.getElementById("tbl").appendChild(trObj);
+        });
+
+    }
+
+    function backToHomePage() {
+            window.location.href = "Factory_Home_Page.html?userid=" + userid;
+        }
+    
+
+    
+        function backToShifts() {
+        window.location.href = "Factory_Shift.html?userid=" + userid;
+    }
+
+
+    
+
+    
+
+
+
+
+</script>
+<body onload="welcomeName(); getEmployeeWithShift()">
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+    
+      
+    
+    
+    
+    
+    
+   
+    <table border="1" id="tbl">
+        <tr><th>Employee Name</th><th>Employee ID</th><th>Shift ID</th></tr>
+    </table><br><br><br>
+
+
+    <input type="button" value="Back to Shifts" onclick="backToShifts()">
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+    <input type="button" value="Back to Homepage" onclick="backToHomePage()">
+   
+</body>
+</html>

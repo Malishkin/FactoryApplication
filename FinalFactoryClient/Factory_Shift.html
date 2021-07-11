@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shifts</title>
+</head>
+<script>
+  
+    const urlParams = new URLSearchParams(window.location.search);
+    let userid = urlParams.get('userid');
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+
+    async function getShift(){
+        let resp = await fetch("https://localhost:44367/api/JustShift");
+        let shifts = await resp.json();
+        console.log(shifts);
+        shifts.forEach(shift => {
+
+            let trObj = document.createElement("tr");
+            let tdID = document.createElement("td");
+            let tdDateShift = document.createElement("td");
+            let tdStartShift = document.createElement("td");
+            let tdEndShift = document.createElement("td");
+            tdID.innerText = shift.ID;
+            let linkObj1 = document.createElement("a");
+            linkObj1.innerText = shift.date.slice(0,10);
+            linkObj1.href = "EmployeeShift_EditEmployeeShift.html?employeeid="+shift.ID  + "&userid="+userid;;
+            tdDateShift.appendChild(linkObj1);
+            tdStartShift.innerText = shift.startTime;
+            tdEndShift.innerText = shift.endTime;
+            
+
+            
+           
+            
+
+            
+
+           
+
+            trObj.appendChild(tdID);
+
+            trObj.appendChild(tdDateShift);
+            
+            trObj.appendChild(tdStartShift);
+            trObj.appendChild(tdEndShift);
+            
+            document.getElementById("tbl").appendChild(trObj);
+        });
+
+    }
+
+
+    function logout() {
+        window.location.href = "Factory_Login.html";
+    }
+function backToHomePage(){
+    window.location.href = "Factory_Home_Page.html?userid="+userid;
+}
+
+function redirectAddShift(){
+    window.location.href = "Factory_NewShift.html?userid="+userid;
+}
+
+function redirectToEditShift() {
+
+    window.location.href = "Factory_EmployeeWithShifts.html?userid="+userid;
+}
+
+
+
+</script>
+<body onload="welcomeName(); getShift()">
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+
+    <table border="1" id="tbl">
+        <tr><th>ID</th><th>Date</th><th>Start time</th><th>End time</th></tr>
+    </table><br><br><br>
+    
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+    <input type="button" value="Add Shift" onclick="redirectAddShift()"><br><br>
+    <input type="button" value="Edit Shifts and Employee" onclick="redirectToEditShift()"><br><br>
+    
+
+    <input type="button" value="Back to Homepage" onclick = "backToHomePage()"><br><br>
+</body>
+</html>

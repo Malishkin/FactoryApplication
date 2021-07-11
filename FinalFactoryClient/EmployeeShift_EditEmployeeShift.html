@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Shifts and Employee</title>
+</head>
+
+<script>
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    let userid = urlParams.get('userid');
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+    
+
+   
+
+    async function getShift(){
+        const urlParams1 = new URLSearchParams(window.location.search);
+        let employeeid = urlParams1.get('employeeid');
+        let resp1 = await fetch("https://localhost:44367/api/ExtendedEmpShift1/" + employeeid);
+        let data1 = await resp1.json();
+        console.log(data1);
+        // document.getElementById("fName").value = data1[0].fName;
+        // document.getElementById("lName").value = data1[0].lName;
+        document.getElementById("employee_id").value = data1[0].employee_id;
+        document.getElementById("shift1_id").value = data1[0].shift1_id;
+ 
+       
+
+    }
+
+    function logout() {
+        window.location.href = "Factory_Login.html";
+    }
+
+      async function updateEmployee() {
+        let status = await addAction();
+        if (status == true)
+        {
+          const urlParams2 = new URLSearchParams(window.location.search);
+          let employeeid = urlParams2.get('employeeid');
+          let obj = {
+
+            employee_id: document.getElementById("employee_id").value,
+            shift1_id: document.getElementById("shift1_id").value
+
+          }
+          let fetchParams = {
+            method: 'PUT',
+            body: JSON.stringify(obj),
+            headers: { "Content-Type": "application/json" }
+          }
+
+          let resp = await fetch("https://localhost:44367/api/ExtendedEmpShift1/" + employeeid, fetchParams);
+          let status = await resp.json();
+          alert(status);
+          window.location.href = "Factory_EmployeeWithShifts.html?userid=" + userid;
+
+
+        }
+
+
+      }
+
+   
+
+    function backToHomePage() {
+            window.location.href = "Factory_Home_Page.html?userid=" + userid;
+        }
+
+    function backToShifts() {
+        window.location.href = "Factory_Shift.html?userid=" + userid;
+    }
+
+
+    var outOfActions = false;
+   
+   async function checkLogs(userid) 
+   {
+     var resp = await fetch("https://localhost:44367/api/Login/"+userid);
+     outOfActions = await resp.json();
+     if (outOfActions == true) {
+       alert("You are out of actions. Come back tomorrow");
+       window.location.href = "Factory_Login.html";
+       return outOfActions;
+     } else {
+       return outOfActions;
+     }
+   }
+   async function addAction()
+   {
+     let status=await checkLogs(userid);
+     if (status == false) {
+       let objToAct = { user_id: userid }
+       var addActParams = {
+         method: 'put',
+         body: JSON.stringify(objToAct),
+         headers: { "Content-type": "application/json" }
+       }
+       let addAction = await fetch("https://localhost:44367/api/Login/" + userid, addActParams);
+       
+       return true;
+       console.log(added);
+     } else {
+       return false;
+     }
+   } 
+   
+
+
+
+
+    
+
+
+</script>
+<body onload="getShift(); welcomeName()" >
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+    <!-- Employee First Name : <input type="text" id="fName"><br> <br>
+    Employee Last Name : <input type="text" id="lName"><br> <br> -->
+    Employee Id : <input type="text" id="employee_id"><br><br>
+    
+    Shift id : <input type="text"  id="shift1_id"> <br> <br>
+
+    
+    
+    
+    <input type="button" class="counter_btn" value="Update" onclick="updateEmployee()"><br><br>
+   
+
+    <input type="button" value="Back to Shifts" onclick="backToShifts()"><br><br>
+    
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+    <input type="button" value="Back to Homepage" onclick="backToHomePage()">
+</body>
+</html>

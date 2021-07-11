@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+</head>
+<script>
+     const urlParams = new URLSearchParams(window.location.search);
+     let userid = urlParams.get('userid');
+ 
+
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+
+    
+
+    function logout(){
+        window.location.href = "Factory_Login.html";
+    }
+
+    function redirectToEmployee(){
+        
+        window.location.href = "Factory_Employee.html?userid="+ userid;
+
+    }
+
+    function redirectToDepartment(){
+        window.location.href = "Factory_Department.html?userid="+userid;
+    }
+    function redirectToShifts(){
+        window.location.href = "Factory_Shift.html?userid="+userid;
+    }
+    let count = (function () {
+            let counter = 0;
+            return function () { return counter += 1; }
+
+        })();
+
+</script>
+<body onload="welcomeName()">
+    
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+    
+    <input type="button" value="Employees" onclick="redirectToEmployee()"><br><br>
+    <input type="button" value="Departments" onclick="redirectToDepartment()"><br><br>
+    <input type="button" value="Shifts" onclick="redirectToShifts()"><br><br>
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+    
+    
+</body>
+</html>

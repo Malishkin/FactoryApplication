@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ed8d3be073a942f9bfdc98cb52405144" Name="Diagram1">
+        <EntityTypeShape EntityType="factoryDBModel.employee" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="factoryDBModel.user" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="factoryDBModel.department1" Width="1.5" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="factoryDBModel.employeeShift1" Width="1.5" PointX="0.625" PointY="4.25" />
+        <EntityTypeShape EntityType="factoryDBModel.shift1" Width="1.5" PointX="2.875" PointY="4.25" />
+        <EntityTypeShape EntityType="factoryDBModel.user_actions" Width="1.5" PointX="5.375" PointY="6.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

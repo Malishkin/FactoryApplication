@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments</title>
+</head>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    let userid = urlParams.get('userid');
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+    async function getDepartments() {
+
+        let resp1 = await fetch("https://localhost:44367/api/Department");
+        let departm = await resp1.json();
+        console.log(departm);
+        departm.forEach(dep => {
+            let trObj = document.createElement("tr");
+            let tdDep = document.createElement("td");
+            let tdMan = document.createElement("td");
+
+            let linkObj = document.createElement("a");
+            linkObj.innerText = dep.department_name;
+            linkObj.href = "Factory_EditDepartment.html?departid=" + dep.ID + "&userid="+userid;
+
+            tdDep.appendChild(linkObj);
+            trObj.appendChild(tdDep);
+
+            if(dep.department_manager != null){
+                tdMan.innerText = dep.managerfName + " " + dep.managerlName;
+
+            }
+            else {
+                tdMan.innerText = "";
+            }
+
+            
+            trObj.appendChild(tdMan);
+
+
+
+            document.getElementById("tbl").appendChild(trObj);
+
+            
+        });
+
+
+    }
+    function logout() {
+        window.location.href = "Factory_Login.html";
+    }
+
+    function redirectAddDepartment(){
+        window.location.href = "Factory_NewDepartment.html?userid="+userid;
+    }
+
+    function backToHomePage(){
+    window.location.href = "Factory_Home_Page.html?userid="+userid;
+}
+
+
+
+</script>
+<body onload="welcomeName(); getDepartments()">
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+    <table border="1" id="tbl">
+        <tr><th>Department</th><th>Manager</th></tr>
+    </table><br><br>
+    <input type="button" value="Add Department" onclick="redirectAddDepartment()"><br><br>
+    
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+    <input type="button" value="Back to Homepage" onclick="backToHomePage()">
+</body>
+</html>

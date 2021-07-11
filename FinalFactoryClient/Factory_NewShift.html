@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Shift</title>
+</head>
+
+<script>
+    // const urlParams = new URLSearchParams(window.location.search);
+    // let userid = urlParams.get('userid');
+    // async function welcomeName() {
+
+    //     let resp = await fetch("https://localhost:44367/api/Login/" + userid);
+    //     let data = await resp.json();
+    //     console.log(data);
+    //     document.getElementById("full_name").innerText = " " + data.fullName + "!"
+
+    // }
+    const urlParams = new URLSearchParams(window.location.search);
+    let userid = urlParams.get('userid');
+    function welcomeName(){
+        document.getElementById("full_name").innerText = " " + sessionStorage.getItem('userFullname') + "!"
+
+    }
+    function logout() {
+        window.location.href = "Factory_Login.html";
+    }
+
+    async function addShift() {
+        let status = await addAction();
+        if (status == true)
+        {
+          const urlParams5 = new URLSearchParams(window.location.search);
+          let employeeid = urlParams5.get('employeeid');
+          let obj = {
+            date: document.getElementById("date").value,
+            startTime: document.getElementById("startTime").value,
+            endTime: document.getElementById("endTime").value
+
+
+          }
+          sessionStorage.setItem('date', obj.date);
+          sessionStorage.setItem('startTime', obj.startTime);
+          sessionStorage.setItem('endTime', obj.endTime);
+          let fetchParams = {
+            method: 'POST',
+            body: JSON.stringify(obj),
+            headers: { "Content-Type": "application/json" }
+          }
+
+          let resp = await fetch("https://localhost:44367/api/JustShift", fetchParams);
+          let status = await resp.json();
+          alert(status);
+
+          window.location.href = "Factory_Shift.html?userid=" + userid;
+          // window.location.href = "Factory_Employee.html?userid="+userid;
+
+        }
+
+
+
+
+      }
+
+    function backToHomePage(){
+    window.location.href = "Factory_Home_Page.html?userid="+userid;
+}
+
+  
+function backToShifts() {
+        window.location.href = "Factory_Shift.html?userid=" + userid;
+    }
+
+    var outOfActions = false;
+   
+   async function checkLogs(userid) 
+   {
+     var resp = await fetch("https://localhost:44367/api/Login/"+userid);
+     outOfActions = await resp.json();
+     if (outOfActions == true) {
+       alert("You are out of actions. Come back tomorrow");
+       window.location.href = "Factory_Login.html";
+       return outOfActions;
+     } else {
+       return outOfActions;
+     }
+   }
+   async function addAction()
+   {
+     let status=await checkLogs(userid);
+     if (status == false) {
+       let objToAct = { user_id: userid }
+       var addActParams = {
+         method: 'put',
+         body: JSON.stringify(objToAct),
+         headers: { "Content-type": "application/json" }
+       }
+       let addAction = await fetch("https://localhost:44367/api/Login/" + userid, addActParams);
+       
+       return true;
+       console.log(added);
+     } else {
+       return false;
+     }
+   } 
+   
+
+
+
+    
+
+
+</script>
+<body onload="welcomeName()">
+    <h3>Welcome, <span id="full_name"></span></h3><br><br>
+    Date : <input type="date" id="date"><br> <br>
+    Start Time : <input type="text" id="startTime"><br> <br>
+    End time : <input type="text"  id="endTime"> <br> <br>
+    
+    
+    <input type="button"  value="Add" onclick="addShift()"><br><br>
+    <input type="button" value="Back to Shifts" onclick="backToShifts()"><br><br>
+    
+    <input type="button" value="Log out" onclick="logout()"><br><br>
+    <input type="button" value="Back to Homepage" onclick="backToHomePage()">
+</body>
+</html>
